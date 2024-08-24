@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.model;
 
 
 
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,12 +11,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"id", "username"}))
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String username;
 
     private String password;
@@ -23,6 +25,8 @@ public class User implements UserDetails {
     private String firstName;
 
     private String lastName;
+
+    private int age;
 
     @ManyToMany
     @JoinTable(name = "users_roles",
@@ -70,6 +74,14 @@ public class User implements UserDetails {
                 ", lastName='" + lastName + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public Long getId() {

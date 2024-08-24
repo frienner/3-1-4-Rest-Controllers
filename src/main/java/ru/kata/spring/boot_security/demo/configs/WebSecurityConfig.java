@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 @Configuration
@@ -26,16 +27,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()//включаем авторизацию
-                .antMatchers("/", "/index").permitAll()//разрешение на переход на "," и "/index"
+                .antMatchers("/", "/api/**").permitAll()
                 .antMatchers("/user").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().successHandler(successUserHandler)
-                .permitAll()
+                .formLogin()
+                    .loginPage("/login")
+                    .successHandler(successUserHandler)
+                    .failureUrl("/login?error=true")
+                    .permitAll()
                 .and()
                 .logout()
-                .permitAll();
+                    .logoutSuccessUrl("/login?logout") // URL для перенаправления после выхода
+                    .permitAll()
+        ;
+
+
+        http.csrf().disable();
+
     }
 
     //для аутентификации будут использоваться данные из таблицы
@@ -57,5 +67,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         return authProvider;
     }
+
 
 }

@@ -1,0 +1,11 @@
+.bg-gray-800 {
+    background-color: #343a40 !important; /* Цвет соответствует $gray-800 в Bootstrap */
+}
+.logout-link {
+    color: #A2A2A2;
+    text-decoration: none;
+}
+.logout-link:hover {
+    color: #F2F2F2; /* Цвет светлее при наведении, можно выбрать любой другой */
+    text-decoration: none
+}

@@ -1,0 +1,17 @@
+.btn-edit-user {
+    background-color: #0DCAC7; /* Цвет фона кнопки */
+    color: #fff; /* Цвет текста кнопки */
+
+}
+
+.btn-edit-user:hover {
+    background-color: #0eafad; /* Цвет фона кнопки */
+    border-color: #0eafad; /* Цвет рамки при наведении */
+    color: #fff; /* Цвет текста при наведении */
+
+    .btn-edit-user:active,
+    .btn-edit-user:focus-visible,
+    .btn-custom:focus:active {
+        background-color: #0eafad; /* Темный зеленый при нажатии */
+    }
+}

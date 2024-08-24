@@ -31,9 +31,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findById(long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    @Override
+    public List<User> findAllOrderedById() { return userRepository.findAllOrderedById(); }
 
     @Override
     public void save(User user) {

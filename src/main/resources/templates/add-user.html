@@ -1,61 +1,115 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:form="http://www.w3.org/1999/html">
+<html lang="en" xmlns:--bs-gutter-x="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link th:href="@{/css/add-user.css}" rel="stylesheet"/>
+    <link th:href="@{/css/header.css}" rel="stylesheet"/>
+    <title>Add user page</title>
     <style>
-        input[type="text"],
-        input[type="number"] {
-            width: 200px; /* Устанавливаем одинаковую ширину для всех полей ввода */
-        }
 
-        label {
-            display: inline-block;
-            width: 100px; /* Устанавливаем одинаковую ширину для всех меток */
-            text-align: right; /* Выравниваем текст меток по правому краю */
-            margin-right: 10px; /* Добавляем небольшое расстояние между меткой и полем ввода */
-        }
-
-        button {
-            margin-left:262px; /* Установите отступ слева, чтобы центрировать кнопку */
-        }
     </style>
 </head>
 <body>
-<h2>Add User</h2>
-<br>
-
-<form th:action="@{/admin/save-user}" th:object="${user}" method="post">
-
-    <input type="hidden" th:field="*{id}">
-
-    <label for="firstName">First Name:</label>
-    <input type="text" id="firstName" th:field="*{firstName}" /><br/><br/>
-
-    <label for="lastName">Last Name:</label>
-    <input type="text" id="lastName" th:field="*{lastName}" /><br/><br/>
-
-    <label for="job">Username:</label>
-    <input type="text" id="job" th:field="*{username}" /><br/><br/>
-
-    <label for="password">Password:</label>
-    <input type="password" id="password" th:field="*{password}"/>
-
-    <div>
-        <label>Roles:</label>
-        <div th:each="role : ${availableRoles}">
-            <input type="checkbox" th:field="*{roles}" th:value="${role.id}"
-                   th:checked="${user.roles.contains(role)}"/>
-            <label th:text="${role.name}"></label>
+<header>
+    <div class="container-fluid mb-4" style="padding-right: 0px; padding-left: 0px;">
+        <div class="row bg-gray-800" style="height: 60px;">
+            <div class="col md-10 text-white p-3" style="font-size: 20px;">
+                <strong th:text="${currentUser.username}">Имя пользователя</strong> with roles:
+                <span th:each="role, iterStat : ${currentUser.roles}"
+                      th:text="${role.name}"
+                      th:if="${iterStat.index == 0}">
+                </span>
+                <span th:each="role, iterStat : ${currentUser.roles}"
+                      th:text="${role.name}"
+                      th:if="${iterStat.index > 0}">, </span>
+            </div>
+            <div class="col-md-2  text-center text-white-50 d-flex align-items-center justify-content-end" style="padding-right: 30px; padding-bottom: 10px;">
+                <a class="custom-hover" href="/logout">Logout</a>
+            </div>
         </div>
     </div>
+</header>
 
+<main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="list-group">
+                            <a href="/admin" class="list-group-item list-group-item-action active"
+                               aria-current="true">Admin</a>
+                            <a href="/user" class="list-group-item list-group-item-action">User</a>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <h3>
+                            Admin
+                        </h3>
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="/admin">Users table</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/add-user">New user</a>
+                            </li>
+                        </ul>
+                        <div class="row border-top border-bottom pt-3 pb-2">
+                            <h5>Add new user</h5>
+                        </div>
+                        <div class="container d-flex justify-content-center align-items-center pt-1">
+                            <div class="col-md-3">
+                                <form class="text-center">
+                                    <div class="mt-1 ">
+                                        <label for="firstName" class="form-label mb-0 custom-label"><strong>First name</strong></label>
+                                        <input type="text" class="form-control custom-input" id="firstName" aria-describedby="emailHelp" placeholder="First Name">
+                                    </div>
+                                    <div class="mt-1 ">
+                                        <label for="lastName" class="form-label mb-0 custom-label"><strong>Last name</strong></label>
+                                        <input type="text" class="form-control custom-input" id="lastName" placeholder="Last Name">
+                                    </div>
+                                    <div class="mt-1 ">
+                                        <label for="age" class="form-label mb-0 custom-label"><strong>Age</strong></label>
+                                        <input type="number" class="form-control custom-input" id="age" placeholder="Age">
+                                    </div>
+                                    <div class="mt-1">
+                                        <label for="email" class="form-label mb-0 custom-label"><strong>Email</strong></label>
+                                        <input type="email" class="form-control custom-input" id="email" aria-describedby="emailHelp" placeholder="Email">
+                                    </div>
+                                    <div class="mt-1">
+                                        <label for="password" class="form-label mb-0 custom-label"><strong>Password</strong></label>
+                                        <input type="password" class="form-control custom-input" id="password" placeholder="Password">
+                                    </div>
+                                    <div class="mt-1">
+                                        <label for="roles" class="form-label mb-0 custom-label"><strong>Roles</strong></label>
+                                        <select class="form-select pt-0 custom-input" id="roles" multiple aria-label="multiple select example">
+                                            <option th:each="role : ${availableRoles}"
+                                                    th:value="${role.id}"
+                                                    th:text="${role.name}"
+                                                    th:selected="${user.roles.contains(role)}">
+                                        </select>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-add-user btn-lg custom-btn">Add new user</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 
-    <button type="submit">Submit</button>
-</form>
-
-<br>
-
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+<script type="text/javascript" th:src="@{js/RESTDataTransition.js}" src="js/RESTDataTransition.js"></script>
+<script type="text/javascript" th:src="@{js/add-user.js}" src="js/add-user.js"></script>
 
 </body>
 </html>

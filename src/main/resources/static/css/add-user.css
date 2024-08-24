@@ -1,0 +1,32 @@
+.custom-hover:hover {
+    color: #F2F2F2; /* Цвет светлее при наведении, можно выбрать любой другой */
+    text-decoration: none
+}
+a {
+    color: #A2A2A2;
+    text-decoration: none;
+}
+.btn-add-user {
+    background-color: #119f08; /* Цвет фона кнопки */
+    color: #fff; /* Цвет текста кнопки */
+
+}
+.btn-add-user:hover {
+    background-color: #138809; /* Цвет фона кнопки */
+    border-color: #138809; /* Цвет рамки при наведении */
+    color: #fff; /* Цвет текста при наведении */
+}
+.btn-add-user:active {
+    background-color: #138809; /* Цвет фона кнопки */
+    border-color: #138809; /* Цвет рамки при наведении */
+    color: #fff; /* Цвет текста при наведении */
+}
+.custom-label {
+    font-size: 14px; /* Измените размер шрифта для меток */
+}
+.custom-input {
+    font-size: 14px; /* Измените размер шрифта для полей ввода */
+}
+.custom-btn {
+    font-size: 16px;
+}

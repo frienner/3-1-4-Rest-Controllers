@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import ru.kata.spring.boot_security.demo.services.UserService;
 import java.util.List;
 
 @Controller
+@RequestMapping
 public class AdminController {
     final UserService userService;
     final RoleService roleService;
@@ -24,46 +27,35 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public String pageForAdmin(Model model) {
-        List<User> users = userService.findAll();
+    public String adminPage(Model model) {
+        List<User> users = userService.findAllOrderedById();
         model.addAttribute("users", users);
+        model.addAttribute("availableRoles", roleService.findAll());
 
+        // Получаем текущего авторизованного пользователя
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName(); // Имя пользователя
+            User currentUser = userService.findByUsername(username); // Получаем объект пользователя по имени
+            model.addAttribute("currentUser", currentUser);
+        }
         return "admin";
     }
 
-    @GetMapping("/admin/add-user")
-    public String addUser(Model model) {
+    @GetMapping("/add-user")
+    public String addUserPage(Model model) {
         User user = new User();
         model.addAttribute("user", user);
         model.addAttribute("availableRoles", roleService.findAll());
 
-        return "add-user";
-    }
-
-    @PostMapping("/admin/save-user")
-    public String saveUser(@ModelAttribute("user") User user) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
-
-        userService.save(user);
-
-        return "redirect:/admin";
-    }
-
-    @GetMapping("/admin/update-user")
-    public String updateUser(@RequestParam("username") String username, Model model) {
-        User user = userService.findByUsername(username);
-
-        model.addAttribute("user",  user);
-        model.addAttribute("availableRoles", roleService.findAll());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String username = authentication.getName(); // Имя пользователя
+            User currentUser = userService.findByUsername(username); // Получаем объект пользователя по имени
+            model.addAttribute("currentUser", currentUser);
+        }
 
         return "add-user";
     }
 
-    @GetMapping("/admin/delete-user")
-    public String deleteUser(@RequestParam("username") String username) {
-        userService.delete(userService.findByUsername(username));
-
-        return "redirect:/admin";
-    }
 }
