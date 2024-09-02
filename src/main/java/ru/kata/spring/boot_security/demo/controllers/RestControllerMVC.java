@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +11,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
-import javax.annotation.security.PermitAll;
+import jakarta.annotation.security.PermitAll;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,6 @@ public class RestControllerMVC {
     final UserService userService;
     final RoleService roleService;
 
-    @Autowired
     public RestControllerMVC(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
@@ -87,7 +85,7 @@ public class RestControllerMVC {
 
     @PostMapping("/save-user-template")
     @PermitAll
-    public ResponseEntity<String> saveUser(@ModelAttribute("user") User user) {
+    public ResponseEntity<String> saveUser(@ModelAttribute User user) {
         try {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(user.getPassword()));

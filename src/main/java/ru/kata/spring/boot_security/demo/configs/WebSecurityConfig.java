@@ -5,15 +5,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import ru.kata.spring.boot_security.demo.services.UserService;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
     private final SuccessUserHandler successUserHandler;
 
     private final UserService userService;
@@ -23,28 +23,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.userService = userService;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()//включаем авторизацию
-                .antMatchers("/", "/api/**").permitAll()
-                .antMatchers("/user").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/admin").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                    .loginPage("/login")
-                    .successHandler(successUserHandler)
-                    .failureUrl("/login?error=true")
-                    .permitAll()
-                .and()
-                .logout()
-                    .logoutSuccessUrl("/login?logout") // URL для перенаправления после выхода
-                    .permitAll()
+                .authorizeHttpRequests(requests -> requests//включаем авторизацию
+                        .requestMatchers("/", "/api/**").permitAll()
+                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .successHandler(successUserHandler)
+                        .failureUrl("/login?error=true")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout") // URL для перенаправления после выхода
+                        .permitAll())
         ;
 
 
-        http.csrf().disable();
+        http.csrf(csrf -> csrf.disable());
+        return http.build();
 
     }
 

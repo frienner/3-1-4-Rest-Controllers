@@ -17,7 +17,7 @@ public class UserDeserializer extends JsonDeserializer<User> {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = p.getCodec().readTree(p);
 
-        Long id = node.get("id").asLong();
+        Long id = node.has("id") ? node.get("id").asLong() : null;
         String username = node.get("username").asText();
         String password = node.get("password").asText();
         String firstName = node.get("firstName").asText();
