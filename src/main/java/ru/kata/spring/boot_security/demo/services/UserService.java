@@ -15,7 +15,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> findAllOrderedById();
 
-    void save(User user);
+    User save(User user);
 
     void delete(User user);
 }

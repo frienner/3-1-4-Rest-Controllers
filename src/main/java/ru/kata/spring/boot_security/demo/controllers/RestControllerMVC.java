@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.exception_handling.NoSuchUserException;
@@ -27,35 +28,35 @@ public class RestControllerMVC {
     }
 
     @GetMapping("/users")
-    public List<User> getAllUsers() {
-        return userService.findAllOrderedById();
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.findAllOrderedById();
+        return ResponseEntity.ok(users);
     }
 
-    //PathVariable - переменная из самой URL
     @GetMapping("/users/{username}")
-    public User getUserById(@PathVariable String username) {
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         User user = userService.findByUsername(username);
         if (user == null) {
             throw new NoSuchUserException(username);
         }
-
-        return user;
+        return ResponseEntity.ok(user);
     }
+
     //RequestBody связывает тело HTTP post метода с параметром метода контроллера
     //в методе post обычно отправляются объекты, именно об этом теле речь
     //конвертация из JSON в объект осуществляется благодаря Jackson
     @PostMapping("/users")
-    public User addUser(@RequestBody User user) {
+    public ResponseEntity<User> addUser(@RequestBody User user) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         user.setPassword(encoder.encode(user.getPassword()));
 
         userService.save(user);
-        return user;
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @ExceptionHandler
     public ResponseEntity<UserIncorrectData> handleException
-            (NoSuchUserException exception) {
+            (UsernameNotFoundException exception) {
         UserIncorrectData data = new UserIncorrectData();
         data.setMessage(exception.getMessage());
 
@@ -63,7 +64,7 @@ public class RestControllerMVC {
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             user.setPassword(userService.findById(user.getId()).getPassword());
         } else {
@@ -72,20 +73,17 @@ public class RestControllerMVC {
         }
 
         userService.save(user);
-
-        return user;
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/users/{username}")
-    public String deleteUser(@PathVariable String username) {
+    public ResponseEntity<String> deleteUser(@PathVariable String username) {
         User user = userService.findByUsername(username);
-        if (user == null) {
-            throw new NoSuchUserException(username);
-        } else {
-            userService.delete(user);
-        }
-        return "User with name " + username + " was deleted";
+        //если не найдет - будет выброшено исключение UsernameNotFound
+        userService.delete(user);
+        return ResponseEntity.ok("User with name " + username + " was deleted");
     }
+
 
     @PostMapping("/save-user-template")
     @PermitAll

@@ -27,12 +27,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     @Override
     public User findById(long id) {
-        return userRepository.findById(id);
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllOrderedById() { return userRepository.findAllOrderedById(); }
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     @Override
